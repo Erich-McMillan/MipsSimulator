@@ -1,6 +1,6 @@
 from enum import IntEnum
 
-class MipsStages(IntEnum):
+class MipsStage(IntEnum):
    IF1 = 0
    IF2 = 1
    ID = 2

@@ -1,8 +1,9 @@
 from abc import ABC
 from typing import List
-from opcode import Opcode
-from register import Register
-from vcpu import VCpu, REG_PROGRAM_COUNTER
+from .opcode import Opcode
+from .register import Register
+from .vcpu import VCpu, REG_PROGRAM_COUNTER
+from .pipelineoperations import PipelineOperations
 from program import Program
 
 class PipelineStage():
@@ -51,7 +52,7 @@ class PipelineStage():
          True if hazard exists, False if no hazard
       """
       for register in registers:
-         if register in self.instruction.output_operands and not self.instruction.output_operands_forwardable():
+         if register in self.instruction.output_operands and not self.instruction.output_operands_forwardable(self.stage_id):
             return False
 
       if self.next == None:
@@ -84,8 +85,8 @@ class PipelineStage():
             self.instruction.unload = False
 
       if self.stalled == False and self.instruction.is_executing and not self.instruction.noop:
-         flush = self.instruction.tick(self.stage_id, vcpu)
-         if flush:
+         operations = self.instruction.tick(self.stage_id, vcpu)
+         if PipelineOperations.Flush in operations:
             self.flush()
 
    def reset(self):

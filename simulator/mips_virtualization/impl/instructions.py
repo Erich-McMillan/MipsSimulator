@@ -36,7 +36,8 @@ class Bnez(Opcode):
          return []
       if curr_stage_id == MipsStage.ID:
          self.target_instruction_addr = self.operands[1].read(vcpu)
-      if curr_stage_id == MipsStage.EX:
+      # if curr_stage_id == MipsStage.EX:
+      if curr_stage_id == MipsStage.MEM1:
          instruction_taken = self.operands[0].read(vcpu)
          if instruction_taken != 0: # branch taken when not zero, pipeline must be flushed
             vcpu.set_register(vcpulib.REG_PROGRAM_COUNTER, self.target_instruction_addr) # set the next instruction counter to the resolved PC
@@ -58,7 +59,7 @@ class Dadd(Opcode):
    def output_operands_forwardable(self, curr_stage_id: MipsStage):
       if self.noop:
          return True
-      return curr_stage_id >= MipsStage.EX
+      return curr_stage_id > MipsStage.EX
 
    def supported_input_operand_formats(self) -> List[AddressingMode]:
       return [AddressingMode.Immediate, AddressingMode.RegisterDirect]
@@ -86,7 +87,7 @@ class Ld(Opcode):
    def output_operands_forwardable(self, curr_stage_id: MipsStage):
       if self.noop:
          return True
-      return curr_stage_id >= MipsStage.MEM2
+      return curr_stage_id > MipsStage.MEM2
 
    def supported_input_operand_formats(self) -> List[AddressingMode]:
       return [AddressingMode.RegisterDirect, AddressingMode.RegisterIndirect, AddressingMode.Immediate, AddressingMode.Displacement]
@@ -95,7 +96,7 @@ class Ld(Opcode):
       if self.noop:
          return []
       if curr_stage_id == MipsStage.MEM2:
-         mem_val = vcpu.get_memory_value(self.operands[0].read(vcpu))
+         mem_val = self.operands[0].read(vcpu)
          self.output_operands[0].write(mem_val, vcpu)
       return []
 
@@ -126,8 +127,7 @@ class Sd(Opcode):
          return []
       if curr_stage_id == MipsStage.MEM2:
          mem_val = self.operands[0].read(vcpu)
-         addr = self.operands[1].read(vcpu)
-         vcpu.set_memory_value(addr, mem_val)
+         self.operands[1].write(mem_val, vcpu)
       return []
 
 class Sub(Opcode):
@@ -143,7 +143,7 @@ class Sub(Opcode):
    def output_operands_forwardable(self, curr_stage_id: MipsStage):
       if self.noop:
          return True
-      return curr_stage_id >= MipsStage.EX
+      return curr_stage_id > MipsStage.EX
 
    def supported_input_operand_formats(self) -> List[AddressingMode]:
       return [AddressingMode.Immediate, AddressingMode.RegisterDirect]

@@ -80,27 +80,27 @@ class PipelineStage():
             self.stalled = True # stall if the next instruction is stalled
 
    def fetch_next_instruction(self, program: MipsProgram, vcpu: VCpu):
-      if self.stalled:
-         return
-
       if self.next == None: # end of pipeline should unload the instruction it executed last time
          if self.instruction != None:
             self.instruction.unload()
       if self.prev is None: # beginning of pipeline must fetch instruction from PC
-         self.instruction = program.next_instruction(vcpu)
-         if self.instruction != None:
-            self.instruction.load()
+         if not self.stalled or not self.next.stalled:
+            self.instruction = program.next_instruction(vcpu)
+            if self.instruction != None:
+               self.instruction.load()
       else:
-         self.instruction = self.prev.instruction
+         if not self.prev.stalled:
+            self.instruction = self.prev.instruction
+            self.prev.instruction = None
 
    def handle_operations(self, operations):
       if PipelineOperations.Flush in operations:
-         self.flush()
+         self.prev.flush() # flush starting with previous instruction
 
    def stall_for_hazards(self):
       if self.next is None: # end of pipeline can't have data hazards
          return
-      if self.instruction is not None:
+      if not self.next.stalled and self.instruction is not None: # if next stage is not stalled, but we are
          self.stalled = self.next.is_data_hazard(self.instruction.operands_required_at_stage(self.stage_id))
 
    def execute_instruction(self, program, vcpu):

@@ -36,23 +36,30 @@ class RegisterIndirectOperand(Operand):
    def __init__(self, register_id: str):
       Operand.__init__(self, AddressingMode.RegisterIndirect, register_id)
 
+   def calc_addr(self, vcpu: VCpu) -> int:
+      return vcpu.get_register(self.register_id).value
+
    def read(self, vcpu: VCpu) -> int:
+      addr = self.calc_addr(vcpu)
       return vcpu.get_memory_value()
 
    def write(self, value: int, vcpu: VCpu):
-      vcpu.set_memory_value(self.read(), value)
+      vcpu.set_memory_value(self.calc_addr(vcpu), value)
 
 class DisplacementOperand(Operand):
    def __init__(self, register_id: str, offset: int):
       self.offset = offset
       Operand.__init__(self, AddressingMode.Displacement, register_id)
 
+   def calc_addr(self, vcpu: VCpu) -> int:
+      return vcpu.get_register(self.register_id).value + self.offset
+
    def read(self, vcpu: VCpu) -> int:
-      addr = vcpu.get_register(self.register_id).value + self.offset
+      addr = self.calc_addr(vcpu)
       return vcpu.get_memory_value(addr)
 
    def write(self, value: int, vcpu: VCpu):
-      vcpu.set_memory_value(self.read(), value)
+      vcpu.set_memory_value(self.calc_addr(vcpu), value)
    
 class ImmediateOperand(Operand):
    def __init__(self, value: int):

@@ -1,4 +1,5 @@
 from typing import Dict
+from copy import deepcopy
 from .vcpu import VCpu
 from .opcode import Opcode
 
@@ -6,20 +7,17 @@ class MipsProgram():
    def __init__(self, opcodes: Dict[int, Opcode]):
       self.is_finished = False
       self.opcodes = opcodes
+      self.exe_id = 1
 
    def next_instruction(self, vcpu: VCpu):
       pc = vcpu.get_pc()
-      pc_next = pc
-      pc_next.value= pc_next.value + 1
-      vcpu.set_pc(pc_next)
 
-      if pc.value >= len(self.opcodes)-1:
+      if pc.value >= len(self.opcodes):
          self.is_finished = True
          return None
 
-      return self.opcodes[pc.value]
-
-   def get_instruction_id(self, opcode: Opcode):
-      for key in self.opcodes:
-         if self.opcodes[key] == opcode:
-            return key
+      vcpu.set_pc(pc.value + 1)
+      copy = deepcopy(self.opcodes[pc.value])
+      copy.exe_id = self.exe_id
+      self.exe_id += 1
+      return copy

@@ -12,7 +12,7 @@ class VCpu():
       self.max_mem_addr = max_memory
 
    def set_pc(self, value):
-      self.registers[REG_PROGRAM_COUNTER] = value
+      self.registers[REG_PROGRAM_COUNTER] = Register(value)
 
    def get_pc(self) -> int:
       return self.registers[REG_PROGRAM_COUNTER]

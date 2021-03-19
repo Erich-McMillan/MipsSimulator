@@ -25,6 +25,7 @@ class Opcode(ABC):
       self.stalled = False
       self.noop = False
       self.validate_operands()
+      self.exe_id = None
 
    def validate_operands(self):
       for op in self.operands:

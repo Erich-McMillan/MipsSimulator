@@ -1,11 +1,11 @@
 from typing import List
 import re
 
-from simulator.mips_virtualization.impl import instructions
-from simulator.lib.generics.opcode import Opcode
-from simulator.lib.generics.operand import Operand, RegisterOperand, ImmediateOperand, RegisterIndirectOperand, DisplacementOperand
+from mips_virtualization.impl import instructions
+from lib.generics.opcode import Opcode
+from lib.generics.operand import Operand, RegisterOperand, ImmediateOperand, RegisterIndirectOperand, DisplacementOperand
 
-def preprocess(code: List[str]) -> List[Opcode]:
+def preprocess(code: List[str]) -> List[str]:
    """Preprocesses raw assembly code, by removing labels and replacing them with tenative PC values
    """
    # find all label definitions
@@ -46,7 +46,7 @@ def find_opcode(name: str):
 def get_operand(operand_code: str):
    "compiles operand code into operand and returns the operand if the opcode supports it"
    operand_patterns = {
-      r'(#\d+)': ImmediateOperand,
+      r'#(\d+)': ImmediateOperand,
       r'(\w+\d{0,})': RegisterOperand,
       r'\((\w+\d{0,})\)': RegisterIndirectOperand,
       r'(\d+)\((\w+\d{0,})\)': DisplacementOperand
@@ -60,20 +60,29 @@ def get_operand(operand_code: str):
       matchobj = re.match(pattern, operand_code_trimmed)
       if matchobj:
          if matchobj.group(0) == operand_code_trimmed: # only complete matches indicate that we found the right opcode
-            operand_obj = operand_patterns[pattern]
+            operand_cls = operand_patterns[pattern]
+
+            if operand_cls == ImmediateOperand:
+               operand_obj = ImmediateOperand(int(matchobj.group(1)))
+            elif operand_cls == RegisterOperand:
+               operand_obj = RegisterOperand(matchobj.group(1))
+            elif operand_cls == RegisterIndirectOperand:
+               operand_obj = RegisterIndirectOperand(matchobj.group(1))
+            elif operand_cls == DisplacementOperand:
+               operand_obj = DisplacementOperand(matchobj.group(2), int(matchobj.group(1)))
 
    if operand_obj is None:
       raise AssertionError(f"\"{operand_code}\" invalid syntax")
 
-   return operand_obj(operand_code)
+   return operand_obj
 
 def assemble(preprocessedCode: List[str]) -> List[Opcode]:
    "Compiles preprocessed code and returns the opcodes"
    opcode_pattern = r"(\w+)\s+"
    operand_pattern = r"([\w\d\(\)\#]+)"
 
-   compiled_code = []
-
+   compiled_code = {}
+   opcode_id = 0
 
    for line in preprocessedCode:
       trimmed_line = line.strip()
@@ -91,7 +100,8 @@ def assemble(preprocessedCode: List[str]) -> List[Opcode]:
             operands.append(get_operand(op))
 
          # add operands to opcode to determine if supported
-         compiled_code.append(opcode_pntr(operands))
+         compiled_code[opcode_id] = opcode_pntr(operands)
+         opcode_id += 1
 
       except(AssertionError):
          print(f"Source Error line: \"{line}\"")

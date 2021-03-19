@@ -1,7 +1,7 @@
-from typing import List
+from typing import List, Dict
 from pathlib import Path
 import toml
-from simulator.lib.generics.register import Register
+from lib.generics.register import Register
 
 def load_toml(path: Path) -> dict:
    return toml.load(path)
@@ -17,14 +17,14 @@ def get_initial_memory_state(tomlContents: dict) -> dict:
 
    return memory
 
-def get_initial_register_state(tomlContents: dict) -> List[Register]:
+def get_initial_register_state(tomlContents: dict) -> Dict[str, Register]:
    REGISTER_KEY = 'registers'
    
-   registers = []
+   registers = {}
    initial_register_values = tomlContents[REGISTER_KEY]
 
    for key in initial_register_values:
-      registers.append(Register(key, initial_register_values[key]))
+      registers[key] = Register(initial_register_values[key])
 
    return registers
 

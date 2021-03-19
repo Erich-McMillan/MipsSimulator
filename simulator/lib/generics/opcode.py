@@ -20,12 +20,11 @@ def split_in_out_operands(num_in, num_out, operands: List[Operand]) -> Tuple[Lis
 class Opcode(ABC):
    def __init__(self, operands: List[Operand], output_operands: List[Operand]):
       self.operands = operands
-      self.output_operands = output_operands # recipients list will be depleted as they are written
+      self.output_operands = output_operands
       self.is_executing = False
       self.stalled = False
       self.noop = False
       self.validate_operands()
-
 
    def validate_operands(self):
       for op in self.operands:
@@ -42,6 +41,10 @@ class Opcode(ABC):
       pass
 
    @abstractmethod
+   def operands_required_at_stage(self, curr_stage_id) -> List[Operand]:
+      pass
+
+   @abstractmethod
    def output_operands_forwardable(self, curr_stage_id) -> bool:
       # implementation specific per opcode
       pass
@@ -51,9 +54,13 @@ class Opcode(ABC):
       # implementation specific per opcode
       pass
 
+   def load(self):
+      self.is_executing = True
+      self.stalled = False
+      self.noop = False
+
    def unload(self):
       self.is_executing = False
-      self.stage = None
       self.stalled = False
       self.noop = False
 

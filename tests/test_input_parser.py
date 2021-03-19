@@ -65,12 +65,10 @@ class TestLoadRegisterState:
       registers = get_initial_register_state(toml_data)
 
       assert len(registers) == 3
-      assert registers[0].name == 'R1'
-      assert registers[0].value == 16
-      assert registers[1].name == 'R3'
-      assert registers[1].value == 42
-      assert registers[2].name == 'R5'
-      assert registers[2].value == 8
+      assert list(registers.keys()) == ['R1', 'R3', 'R5']
+      assert registers['R1'].value == 16
+      assert registers['R3'].value == 42
+      assert registers['R5'].value == 8
 
 class TestLoadCode:
    def test_get_code(self, toml_data):

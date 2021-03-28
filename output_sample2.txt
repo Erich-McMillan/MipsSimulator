@@ -1,0 +1,18 @@
+c#1 I1-IF1 
+c#2 I1-IF2 I2-IF1 
+c#3 I1-ID I2-IF2 
+c#4 I1-EX I2-ID 
+c#5 I1-MEM1 I2-stall 
+c#6 I1-MEM2 I2-stall 
+c#7 I1-MEM3 I2-EX 
+c#8 I1-WB I2-MEM1 
+c#9 I2-MEM2 
+c#10 I2-MEM3 
+c#11 I2-WB 
+REGISTERS
+R1 5
+R4 3
+R2 5
+R3 10
+MEMORY
+3 5

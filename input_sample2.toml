@@ -1,0 +1,12 @@
+[registers]
+   R1=5
+   R4=3
+
+[memory]
+   3 = 5
+
+[code]
+   code = """
+         LD R2, (R4)
+         DADD R3, R2, R1
+   """

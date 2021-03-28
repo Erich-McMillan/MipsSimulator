@@ -1,0 +1,11 @@
+[registers]
+   R1=3
+   R2=2
+
+[memory]
+
+[code]
+   code = """
+         DADD R3, R2, R1
+         SUB R2, R3, R1
+   """

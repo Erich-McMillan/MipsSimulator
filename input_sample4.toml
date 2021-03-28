@@ -1,0 +1,14 @@
+[registers]
+   R1=4
+   R2=6
+   R3=2
+
+[memory]
+
+[code]
+   code = """
+   LOOP: SUB R1, R1, R3
+         BNEZ R1, LOOP
+         DADD R5, R3, R2
+         DADD R3, R5, R2
+   """

@@ -26,6 +26,10 @@ class Bnez(Opcode):
    def output_operands_forwardable(self, curr_stage_id: MipsStage):
       # Bnez is special case, it has no outputs so they are always
       # fowardable
+      # IF we were to predict that branches were taken then we would
+      # have to force stall the pipeline until we could determine the
+      # exact jump addr. In this case the address could be calculated
+      # at the end of decode stage
       True
 
    def supported_input_operand_formats(self) -> List[AddressingMode]:
@@ -90,7 +94,7 @@ class Ld(Opcode):
       return curr_stage_id > MipsStage.MEM2
 
    def supported_input_operand_formats(self) -> List[AddressingMode]:
-      return [AddressingMode.RegisterDirect, AddressingMode.RegisterIndirect, AddressingMode.Immediate, AddressingMode.Displacement]
+      return [AddressingMode.RegisterIndirect, AddressingMode.Displacement]
 
    def tick(self, curr_stage_id, vcpu: VCpu) -> List[PipelineOperations]:
       if self.noop:
@@ -120,7 +124,7 @@ class Sd(Opcode):
       return True 
 
    def supported_input_operand_formats(self) -> List[AddressingMode]:
-      return [AddressingMode.RegisterDirect, AddressingMode.RegisterIndirect, AddressingMode.Immediate, AddressingMode.Displacement]
+      return [AddressingMode.RegisterIndirect, AddressingMode.Displacement, AddressingMode.RegisterDirect]
 
    def tick(self, curr_stage_id, vcpu: VCpu) -> List[PipelineOperations]:
       if self.noop:

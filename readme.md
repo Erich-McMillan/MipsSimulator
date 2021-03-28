@@ -38,8 +38,8 @@ The SB type instructions (BNEZ) require input operands, i.e. branch target addre
 
 The requirements for this project are:
 
-Python "^3.8"
-Toml "^0.10.2"
+- Python "^3.8"
+- Toml "^0.10.2"
 
 Toml can be installed using `pip install toml`
 

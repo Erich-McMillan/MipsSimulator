@@ -109,4 +109,4 @@ MEMORY
 3 5
 ```
 
-Once the program has completed the first simulation it will prompt you to enter a new set of input/output files or `exit` to end the program. 
+Once the program has completed the first simulation it will prompt you to enter `simulate path/to/next/input.toml path/to/next/output.txt` exit` to end the program. 

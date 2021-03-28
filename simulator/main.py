@@ -2,9 +2,9 @@ import argparse
 from pathlib import Path
 import re
 
-import ptvsd
-ptvsd.enable_attach()
-ptvsd.wait_for_attach()
+# import ptvsd
+# ptvsd.enable_attach()
+# ptvsd.wait_for_attach()
 
 from input_parser import load_toml, get_code, get_initial_memory_state, get_initial_register_state
 from mips_virtualization.assembler import preprocess, assemble

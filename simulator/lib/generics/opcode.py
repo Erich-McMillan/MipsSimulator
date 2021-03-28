@@ -30,7 +30,10 @@ class Opcode(ABC):
    def validate_operands(self):
       for op in self.operands:
          if op.mode not in self.supported_input_operand_formats():
-            raise AssertionError(f"Input operand {op} not a supported addressing mode for this instruction. Supported addressing modes {self.supported_input_operand_formats}")
+            for supfmt in self.supported_input_operand_formats():
+               print(supfmt.name)
+            supported_fmts_str = [supfmt.name for supfmt in self.supported_input_operand_formats()]
+            raise AssertionError(f"Input operand {type(op).__name__} not a supported addressing mode for this instruction. Supported addressing modes {supported_fmts_str}")
 
       for op in self.output_operands:
          if op.mode is not AddressingMode.RegisterDirect:

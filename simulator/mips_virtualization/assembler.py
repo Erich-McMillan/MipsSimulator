@@ -1,3 +1,4 @@
+import sys
 from typing import List
 import re
 
@@ -103,9 +104,10 @@ def assemble(preprocessedCode: List[str]) -> List[Opcode]:
          compiled_code[opcode_id] = opcode_pntr(operands)
          opcode_id += 1
 
-      except(AssertionError):
+      except AssertionError as e:
          print(f"Source Error line: \"{line}\"")
-         raise
+         print(e)
+         sys.exit()
 
    return compiled_code
 

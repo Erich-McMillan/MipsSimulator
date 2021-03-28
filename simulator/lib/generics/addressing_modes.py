@@ -1,6 +1,6 @@
 from enum import IntEnum
 
-class AddressingMode():
+class AddressingMode(IntEnum):
    Immediate = 0
    RegisterDirect = 1
    RegisterIndirect = 2

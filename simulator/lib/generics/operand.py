@@ -41,7 +41,7 @@ class RegisterIndirectOperand(Operand):
 
    def read(self, vcpu: VCpu) -> int:
       addr = self.calc_addr(vcpu)
-      return vcpu.get_memory_value()
+      return vcpu.get_memory_value(addr)
 
    def write(self, value: int, vcpu: VCpu):
       vcpu.set_memory_value(self.calc_addr(vcpu), value)
